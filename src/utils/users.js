@@ -45,9 +45,12 @@ const getUsersInRoom = (room)=>{
     return users.filter((user)=>user.room===room)
 }
 
+const getUsers = ()=> users
+
 module.exports={
     addUser,
     removeUser,
     getUser,
-    getUsersInRoom
+    getUsersInRoom,
+    getUsers
 }

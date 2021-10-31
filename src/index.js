@@ -5,6 +5,7 @@ const socketio = require('socket.io')
 const Filter = require('bad-words')
 const {generateMessage,generateLocationMessage} = require('./utils/messages')
 const {addUser,removeUser,getUser,getUsersInRoom}=require('./utils/users')
+const { addRoom, getRooms, removeRoom } = require('./utils/rooms')
 
 const app = express()
 const server = http.createServer(app)
@@ -28,7 +29,7 @@ io.on('connection',(socket)=>{
         if(error){
           return callback(error)
         } 
-
+         addRoom(user.room)
          socket.join(user.room)
 
          socket.emit('message',generateMessage('Admin','Welcome!'))
@@ -40,6 +41,9 @@ io.on('connection',(socket)=>{
          callback()
      })
 
+     socket.on('getActiveRooms',()=>{
+        socket.emit('activeRooms',getRooms())
+    })
 
     socket.on('sendMessage',(message , callback)=>{
         const user = getUser(socket.id)
@@ -56,11 +60,16 @@ io.on('connection',(socket)=>{
         const user = removeUser(socket.id)
        if(user){
         io.to(user.room).emit('message',generateMessage('Admin',`${user.username} has left!`))
+
+        removeRoom(user.room)
+
         io.to(user.room).emit('roomData',{
             room:user.room,
             users :getUsersInRoom(user.room)
         })   
+
     }
+    
     })
 
     socket.on('sendLocation',(coordinates,callback)=>{
@@ -69,7 +78,7 @@ io.on('connection',(socket)=>{
         callback()
     })
    
-
+ 
 
 })
 

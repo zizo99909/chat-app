@@ -12,7 +12,20 @@ const locationMessageTemplate = document.querySelector('#location-message-templa
 const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 
 //options
-const{username , room}= Qs.parse(location.search,{ignoreQueryPrefix:true})
+const{username , createRoom , joinRoom}= Qs.parse(location.search,{ignoreQueryPrefix:true})
+
+const roomCheck = ()=>{
+    if(createRoom&&joinRoom){
+        alert('Create a room or select an existing one')
+        location.href='/'
+        return
+    }
+
+    return createRoom ? createRoom:joinRoom
+}
+
+const room =roomCheck()
+
 
 const autoscroll = ()=>{
     //New message element
